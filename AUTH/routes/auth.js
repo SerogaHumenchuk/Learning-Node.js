@@ -4,23 +4,27 @@ const User = require('../model/User');
 // Validation
 const Joi = require('@hapi/joi');
 
-const schema = {
+const schema = Joi.object({
   name: Joi.string()
-  .min(6)
-  .required(),
+    .min(6)
+    .required(),
   email: Joi.string()
-  .min(6)
-  .required()
-  .email(),
+    .min(6)
+    .required()
+    .email(),
   password: Joi.string()
-  .min(6)
-  .required()
-}
+    .min(6)
+    .required(),
+});
 
 router.post('/register', async (req, res) => {
   // Lets validation
-  const validation = Joi.validate(req.body, schema)
-  res.send(validation)
+  try {
+    const validation = await schema.validateAsync(req.body);
+    res.send(validation);
+  } catch (err) {
+    res.status(400).send(err);
+  }
   // const user = new User({
   //   name: req.body.name,
   //   email: req.body.email,
